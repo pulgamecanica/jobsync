@@ -5,6 +5,10 @@
 /.pnp
 .pnp.js
 .yarn/install-state.gz
+# bun derives its lockfile from package-lock.json at build time; keep
+# package-lock.json as the single source of truth and don't commit bun.lock
+bun.lock
+bun.lockb
 
 # testing
 /coverage
