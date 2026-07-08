@@ -7,9 +7,15 @@ RUN apk add --no-cache libc6-compat
 # Set the working directory
 WORKDIR /app
 
-# Install dependencies based on the preferred package manager
+# Pull the bun binary from the official multi-arch image — installing deps with
+# bun is much faster than `npm ci`, and this avoids a separate bun-install step.
+COPY --from=oven/bun:1.2-alpine /usr/local/bin/bun /usr/local/bin/bun
+
+# Install dependencies (bun reads the existing package-lock.json for pinned
+# versions; Prisma's client is generated explicitly in the builder stage, so
+# bun skipping postinstall scripts is fine).
 COPY package.json package-lock.json* ./
-RUN npm ci
+RUN bun install
 
 # Rebuild the source code only when needed
 FROM base AS builder
